@@ -20,5 +20,9 @@ public class Display extends JPanel {
 
     public void setValue(String value) {
         this.display.setText(value);
-    } 
+    }
+
+    public String getValue(){
+        return this.display.getText();
+   }
 }

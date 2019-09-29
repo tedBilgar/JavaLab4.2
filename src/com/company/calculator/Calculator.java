@@ -89,7 +89,7 @@ public final class Calculator extends JFrame implements ActionListener {
 
     private void pressedOperator(Operator operator) {
         double operand2 = displayValue.length() > 0
-                ? Double.parseDouble(displayValue.toString()) : operand1;
+                ? Double.parseDouble(display.getValue()) : operand1;
 
         if (operator == Operator.EQUAL) {
 
@@ -101,6 +101,7 @@ public final class Calculator extends JFrame implements ActionListener {
             displayValue.delete(0, displayValue.length());
             displayValue.append(operand2);
             display.setValue("" + (long) operand2);
+            operand1 = operand2;
             return;
         }else {
             if (lastAction != Action.OPERATION) {
