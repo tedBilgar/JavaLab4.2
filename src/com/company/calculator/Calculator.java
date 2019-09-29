@@ -91,9 +91,11 @@ public final class Calculator extends JFrame implements ActionListener {
         } else {
             operandCount++;
             if (operandCount > 1) {
-                calculate(operator, operand2);
+                calculate(previousOperator, operand2);
             }else{
-                operand1 = operand2;
+                if (previousOperator != Operator.EQUAL) {
+                    operand1 = operand2;
+                }
             }
             clearDisplay();
         }
