@@ -12,10 +12,15 @@ public final class Calculator extends JFrame implements ActionListener {
     private int operandCount = 0;
     private Operator previousOperator = null;
     private Display display;
+    private Action lastAction;
 
     private enum Operator {
 
         EQUAL, PLUS, MINUS, MULTIPLY, DIVIDE, INVERSE_SIGN;
+    }
+
+    private enum Action {
+        NUM, OPERATION
     }
 
     public Calculator() {
@@ -44,6 +49,7 @@ public final class Calculator extends JFrame implements ActionListener {
     }
 
     private void pressedNumber(String number) {
+        lastAction = Action.NUM;
         if (this.previousOperator == Operator.EQUAL) {
             previousOperator = null;
             clearDisplay();
@@ -82,7 +88,6 @@ public final class Calculator extends JFrame implements ActionListener {
     }
 
     private void pressedOperator(Operator operator) {
-
         double operand2 = displayValue.length() > 0
                 ? Double.parseDouble(displayValue.toString()) : operand1;
 
@@ -98,8 +103,10 @@ public final class Calculator extends JFrame implements ActionListener {
             display.setValue("" + (long) operand2);
             return;
         }else {
-            operandCount++;
-            if (operandCount > 1) {
+            if (lastAction != Action.OPERATION) {
+                operandCount++;
+            }
+            if (lastAction != Action.OPERATION && operandCount > 1) {
                 calculate(previousOperator, operand2);
             }else{
                 if (previousOperator != Operator.EQUAL) {
@@ -114,6 +121,7 @@ public final class Calculator extends JFrame implements ActionListener {
         } else {
             display.setValue("" + (long) operand1);
         }
+        lastAction = Action.OPERATION;
         this.previousOperator = operator;
     }
 
