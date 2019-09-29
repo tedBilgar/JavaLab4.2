@@ -81,9 +81,6 @@ public final class Calculator extends JFrame implements ActionListener {
             case DIVIDE:
                 operand1 /= b;
                 break;
-            case INVERSE_SIGN:
-                b = -b;
-                break;
         }
     }
 
