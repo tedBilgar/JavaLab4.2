@@ -104,7 +104,7 @@ public final class Calculator extends JFrame implements ActionListener {
             operand1 = operand2;
             return;
         }else {
-            if (lastAction != Action.OPERATION) {
+            if (lastAction != Action.OPERATION || previousOperator == Operator.EQUAL) {
                 operandCount++;
             }
             if (lastAction != Action.OPERATION && operandCount > 1) {
@@ -122,7 +122,9 @@ public final class Calculator extends JFrame implements ActionListener {
         } else {
             display.setValue("" + (long) operand1);
         }
-        lastAction = Action.OPERATION;
+        if (previousOperator != Operator.INVERSE_SIGN) {
+            lastAction = Action.OPERATION;
+        }
         this.previousOperator = operator;
     }
 
