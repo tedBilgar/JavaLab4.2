@@ -15,7 +15,7 @@ public final class Calculator extends JFrame implements ActionListener {
 
     private enum Operator {
 
-        EQUAL, PLUS, MINUS, MULTIPLY, DIVIDE;
+        EQUAL, PLUS, MINUS, MULTIPLY, DIVIDE, INVERSE_SIGN;
     }
 
     public Calculator() {
@@ -75,6 +75,9 @@ public final class Calculator extends JFrame implements ActionListener {
             case DIVIDE:
                 operand1 /= b;
                 break;
+            case INVERSE_SIGN:
+                b = -b;
+                break;
         }
     }
 
@@ -88,7 +91,13 @@ public final class Calculator extends JFrame implements ActionListener {
             calculate(previousOperator, operand2);
             operandCount = 0;
 
-        } else {
+        } else if (operator == Operator.INVERSE_SIGN){
+            operand2 = -operand2;
+            displayValue.delete(0, displayValue.length());
+            displayValue.append(operand2);
+            display.setValue("" + (long) operand2);
+            return;
+        }else {
             operandCount++;
             if (operandCount > 1) {
                 calculate(previousOperator, operand2);
@@ -111,7 +120,8 @@ public final class Calculator extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         JButton src = (JButton) e.getSource();
-        switch (src.getText()) {
+        String text = src.getText();
+        switch (text) {
             case "0":
             case "1":
             case "2":
@@ -139,6 +149,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 break;
             case "/":
                 pressedOperator(Operator.DIVIDE);
+                break;
+            case "+/-":
+                pressedOperator(Operator.INVERSE_SIGN);
                 break;
             case ".":
                 if (!isDotPressed) {
