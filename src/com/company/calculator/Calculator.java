@@ -108,12 +108,20 @@ public final class Calculator extends JFrame implements ActionListener {
             }
             clearDisplay();
         }
-        if (isDotPressed) {
+
+        if (isDotPressed || isDecimalValue(operand1)) {
             display.setValue("" + operand1);
         } else {
             display.setValue("" + (long) operand1);
         }
         this.previousOperator = operator;
+    }
+
+    private boolean isDecimalValue(double value){
+        String[] splitter = Double.toString(value).split("\\.");
+        long decimalPart = Long.parseLong(splitter[1]);
+        if (decimalPart > 0) return true;
+        else return false;
     }
 
     @Override
