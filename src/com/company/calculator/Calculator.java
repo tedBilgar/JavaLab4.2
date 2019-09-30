@@ -18,7 +18,7 @@ public final class Calculator extends JFrame implements ActionListener {
 
     private enum Operator {
 
-        EQUAL, PLUS, MINUS, MULTIPLY, DIVIDE, INVERSE_SIGN;
+        EQUAL, PLUS, MINUS, MULTIPLY, DIVIDE, INVERSE_SIGN, DOUBLE_GRADE;
     }
 
     private enum Action {
@@ -89,6 +89,22 @@ public final class Calculator extends JFrame implements ActionListener {
         }
     }
 
+    private void unaryOperator(Operator operator, double operand2){
+        isDotPressed = false;
+        switch (operator) {
+            case DOUBLE_GRADE:
+                operand2 = Math.pow(operand2, 2);
+                break;
+            case INVERSE_SIGN:
+                operand2 = -operand2;
+                break;
+        }
+        displayValue.delete(0, displayValue.length());
+        displayValue.append(operand2);
+        display.setValue("" + (long) operand2);
+        operand1 = operand2;
+    }
+
     private void pressedOperator(Operator operator) {
         double operand2 = displayValue.length() > 0
                 ? Double.parseDouble(display.getValue()) : operand1;
@@ -99,12 +115,8 @@ public final class Calculator extends JFrame implements ActionListener {
                 calculate(previousOperator, operand2);
                 operandCount = 0;
 
-            } else if (operator == Operator.INVERSE_SIGN) {
-                operand2 = -operand2;
-                displayValue.delete(0, displayValue.length());
-                displayValue.append(operand2);
-                display.setValue("" + (long) operand2);
-                operand1 = operand2;
+            } else if (operator == Operator.INVERSE_SIGN || operator == Operator.DOUBLE_GRADE) {
+                unaryOperator(operator, operand2);
                 return;
             } else {
                 if (lastAction != Action.OPERATION || previousOperator == Operator.EQUAL) {
@@ -195,6 +207,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 break;
             case "C":
                 pressedClear();
+                break;
+            case "X^2":
+                pressedOperator(Operator.DOUBLE_GRADE);
                 break;
         }
     }
