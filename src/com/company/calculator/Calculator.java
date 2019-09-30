@@ -65,11 +65,13 @@ public final class Calculator extends JFrame implements ActionListener {
     private void pressedClear() {
         previousOperator = null;
         operand1 = 0;
+        isDotPressed = false;
         clearDisplay();
         operandCount = 0;
     }
 
     private void calculate(Operator operator, double b) {
+        isDotPressed = false;
         switch (operator) {
             case PLUS:
                 operand1 += b;
@@ -118,7 +120,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 clearDisplay();
             }
 
-            if (isDotPressed || isDecimalValue(operand1)) {
+            if (isDecimalValue(operand1)) {
                 display.setValue("" + operand1);
             } else {
                 display.setValue("" + (long) operand1);
@@ -129,7 +131,7 @@ public final class Calculator extends JFrame implements ActionListener {
             this.previousOperator = operator;
         } catch (ZeroDividingRunTimeException zeroException){
             clearDisplay();
-            operandCount = 0;
+            pressedClear();
             display.setValue(zeroException.getMessage());
         }
     }
@@ -139,6 +141,14 @@ public final class Calculator extends JFrame implements ActionListener {
         long decimalPart = Long.parseLong(splitter[1]);
         if (decimalPart > 0) return true;
         else return false;
+    }
+
+    private void addDotToNumber(){
+        if (!isDotPressed){
+            isDotPressed = true;
+            displayValue.append('.');
+            display.setValue(display.getValue() + ".");
+        }
     }
 
     @Override
@@ -159,7 +169,6 @@ public final class Calculator extends JFrame implements ActionListener {
             case "9":
                 pressedNumber(src.getText());
                 break;
-
             case "=":
                 pressedOperator(Operator.EQUAL);
                 break;
@@ -179,10 +188,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 pressedOperator(Operator.INVERSE_SIGN);
                 break;
             case ".":
-                if (!isDotPressed) {
-                    isDotPressed = true;
-                    displayValue.append('.');
-                }
+                addDotToNumber();
                 break;
             case "C":
                 pressedClear();
