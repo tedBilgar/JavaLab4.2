@@ -1,5 +1,7 @@
 package com.company.calculator;
 
+import com.company.calculator.exceptions.ZeroDividingRunTimeException;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +29,7 @@ public final class Calculator extends JFrame implements ActionListener {
         super("Calculator");
         displayValue = new StringBuilder(32);
         initComponents();
-        setSize(230, 200);
+        setSize(460, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -79,6 +81,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 operand1 *= b;
                 break;
             case DIVIDE:
+                if (b == 0) throw new ZeroDividingRunTimeException();
                 operand1 /= b;
                 break;
         }
@@ -88,41 +91,47 @@ public final class Calculator extends JFrame implements ActionListener {
         double operand2 = displayValue.length() > 0
                 ? Double.parseDouble(display.getValue()) : operand1;
 
-        if (operator == Operator.EQUAL) {
+        try {
+            if (operator == Operator.EQUAL) {
 
-            calculate(previousOperator, operand2);
-            operandCount = 0;
-
-        } else if (operator == Operator.INVERSE_SIGN){
-            operand2 = -operand2;
-            displayValue.delete(0, displayValue.length());
-            displayValue.append(operand2);
-            display.setValue("" + (long) operand2);
-            operand1 = operand2;
-            return;
-        }else {
-            if (lastAction != Action.OPERATION || previousOperator == Operator.EQUAL) {
-                operandCount++;
-            }
-            if (lastAction != Action.OPERATION && operandCount > 1) {
                 calculate(previousOperator, operand2);
-            }else{
-                if (previousOperator != Operator.EQUAL) {
-                    operand1 = operand2;
-                }
-            }
-            clearDisplay();
-        }
+                operandCount = 0;
 
-        if (isDotPressed || isDecimalValue(operand1)) {
-            display.setValue("" + operand1);
-        } else {
-            display.setValue("" + (long) operand1);
+            } else if (operator == Operator.INVERSE_SIGN) {
+                operand2 = -operand2;
+                displayValue.delete(0, displayValue.length());
+                displayValue.append(operand2);
+                display.setValue("" + (long) operand2);
+                operand1 = operand2;
+                return;
+            } else {
+                if (lastAction != Action.OPERATION || previousOperator == Operator.EQUAL) {
+                    operandCount++;
+                }
+                if (lastAction != Action.OPERATION && operandCount > 1) {
+                    calculate(previousOperator, operand2);
+                } else {
+                    if (previousOperator != Operator.EQUAL) {
+                        operand1 = operand2;
+                    }
+                }
+                clearDisplay();
+            }
+
+            if (isDotPressed || isDecimalValue(operand1)) {
+                display.setValue("" + operand1);
+            } else {
+                display.setValue("" + (long) operand1);
+            }
+            if (previousOperator != Operator.INVERSE_SIGN) {
+                lastAction = Action.OPERATION;
+            }
+            this.previousOperator = operator;
+        } catch (ZeroDividingRunTimeException zeroException){
+            clearDisplay();
+            operandCount = 0;
+            display.setValue(zeroException.getMessage());
         }
-        if (previousOperator != Operator.INVERSE_SIGN) {
-            lastAction = Action.OPERATION;
-        }
-        this.previousOperator = operator;
     }
 
     private boolean isDecimalValue(double value){
