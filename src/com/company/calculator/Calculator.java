@@ -130,7 +130,6 @@ public final class Calculator extends JFrame implements ActionListener {
             }
             this.previousOperator = operator;
         } catch (ZeroDividingRunTimeException zeroException){
-            clearDisplay();
             pressedClear();
             display.setValue(zeroException.getMessage());
         }
