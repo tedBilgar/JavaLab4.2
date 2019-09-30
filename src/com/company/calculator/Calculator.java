@@ -145,7 +145,11 @@ public final class Calculator extends JFrame implements ActionListener {
     private void addDotToNumber(){
         if (!isDotPressed){
             isDotPressed = true;
-            displayValue.append('.');
+            String addingPart = ".";
+            if (Integer.parseInt(display.getValue()) == 0){
+                addingPart = "0.";
+            }
+            displayValue.append(addingPart);
             display.setValue(display.getValue() + ".");
         }
     }
