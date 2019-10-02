@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 
 public final class Calculator extends JFrame implements ActionListener {
 
@@ -106,7 +107,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 break;
             case DIVIDE:
                 if (b == BigDecimal.ZERO) throw new ZeroDividingRunTimeException();
-                operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2);
+                operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2, 6, RoundingMode.HALF_UP).stripTrailingZeros();
                 break;
         }
         operand1 = new BigDecimal(operandBigDecimal1.toString());
