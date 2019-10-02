@@ -17,7 +17,7 @@ public final class Calculator extends JFrame implements ActionListener {
     private Operator previousOperator = null;
     private Display display;
     private Action lastAction;
-    private static final double MAX_VALUE = 999_999_999_999_999d;
+    private static final double MAX_VALUE = 999_999d;
 
     private enum Operator {
 
@@ -54,7 +54,7 @@ public final class Calculator extends JFrame implements ActionListener {
     }
 
     private void pressedNumber(String number) {
-        if (Double.parseDouble(display.getValue()) < MAX_VALUE) {
+        if (Double.parseDouble(display.getValue()) < MAX_VALUE || lastAction == Action.OPERATION) {
 
             lastAction = Action.NUM;
             if (this.previousOperator == Operator.EQUAL) {
@@ -90,10 +90,10 @@ public final class Calculator extends JFrame implements ActionListener {
         operandCount = 0;
     }
 
-    private void calculate(Operator operator, double b) {
+    private void calculate(Operator operator, BigDecimal b) {
         isDotPressed = false;
         BigDecimal operandBigDecimal1 = operand1;
-        BigDecimal operandBigDecimal2 = new BigDecimal(b, MathContext.DECIMAL32);
+        BigDecimal operandBigDecimal2 = b;
         switch (operator) {
             case PLUS:
                 operandBigDecimal1 = operandBigDecimal1.add(operandBigDecimal2);
@@ -105,32 +105,32 @@ public final class Calculator extends JFrame implements ActionListener {
                 operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2);
                 break;
             case DIVIDE:
-                if (b == 0) throw new ZeroDividingRunTimeException();
+                if (b == BigDecimal.ZERO) throw new ZeroDividingRunTimeException();
                 operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2);
                 break;
         }
-        operand1 = BigDecimal.valueOf(operandBigDecimal1.doubleValue());
+        operand1 = new BigDecimal(operandBigDecimal1.toString());
     }
 
-    private void unaryOperator(Operator operator, double operand2){
+    private void unaryOperator(Operator operator, BigDecimal operand2){
         isDotPressed = false;
         switch (operator) {
             case DOUBLE_GRADE:
-                operand2 = Math.pow(operand2, 2);
+                operand2 = BigDecimal.valueOf(Math.pow(operand2.doubleValue(), 2));
                 break;
             case INVERSE_SIGN:
-                operand2 = -operand2;
+                operand2 = BigDecimal.valueOf(-operand2.doubleValue());
                 break;
         }
         displayValue.delete(0, displayValue.length());
         displayValue.append(operand2);
-        display.setValue("" + (long) operand2);
-        operand1 = BigDecimal.valueOf(operand2);
+        display.setValue("" + operand2.toString());
+        operand1 = new BigDecimal(operand2.toString());
     }
 
     private void pressedOperator(Operator operator) {
-        double operand2 = displayValue.length() > 0
-                ? Double.parseDouble(display.getValue()) : operand1.doubleValue();
+        BigDecimal operand2 = displayValue.length() > 0
+                ? new BigDecimal(display.getValue()) : operand1;
 
         try {
             if (operator == Operator.EQUAL) {
@@ -149,7 +149,7 @@ public final class Calculator extends JFrame implements ActionListener {
                     calculate(previousOperator, operand2);
                 } else {
                     if (previousOperator != Operator.EQUAL) {
-                        operand1 = BigDecimal.valueOf(operand2);
+                        operand1 = new BigDecimal(operand2.toString());
                     }
                 }
                 clearDisplay();
