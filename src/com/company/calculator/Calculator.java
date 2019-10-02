@@ -62,6 +62,14 @@ public final class Calculator extends JFrame implements ActionListener {
         display.setValue(displayValue.toString());
     }
 
+    private void pressedDeleteLastNumber(){
+        String prevValue = display.getValue();
+
+        clearDisplay();
+        display.setValue(prevValue.substring(0,prevValue.length()-1));
+        displayValue.append(prevValue);
+        if (previousOperator == Operator.EQUAL) operand1 = Double.parseDouble(display.getValue());
+    }
     private void pressedClear() {
         previousOperator = null;
         operand1 = 0;
@@ -210,6 +218,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 break;
             case "X^2":
                 pressedOperator(Operator.DOUBLE_GRADE);
+                break;
+            case "<--":
+                pressedDeleteLastNumber();
                 break;
         }
     }
