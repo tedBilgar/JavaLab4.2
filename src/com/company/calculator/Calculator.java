@@ -99,7 +99,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 operandBigDecimal1 = operandBigDecimal1.add(operandBigDecimal2);
                 break;
             case MINUS:
-                operandBigDecimal1 = operandBigDecimal1.min(operandBigDecimal2);
+                operandBigDecimal1 = operandBigDecimal1.subtract(operandBigDecimal2);
                 break;
             case MULTIPLY:
                 operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2);
@@ -183,11 +183,20 @@ public final class Calculator extends JFrame implements ActionListener {
         if (!isDotPressed){
             isDotPressed = true;
             String addingPart = ".";
-            if (Integer.parseInt(display.getValue()) == 0){
-                addingPart = "0.";
+
+            if (lastAction != Action.OPERATION) {
+                if (Double.parseDouble(display.getValue()) == 0) {
+                    addingPart = "0.";
+                }
+                displayValue.append(addingPart);
+                display.setValue(display.getValue() + ".");
+                lastAction = Action.NUM;
+            }else {
+                clearDisplay();
+                displayValue.append("0.");
+                display.setValue("0.");
+                lastAction = Action.NUM;
             }
-            displayValue.append(addingPart);
-            display.setValue(display.getValue() + ".");
         }
     }
 
