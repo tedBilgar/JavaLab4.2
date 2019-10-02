@@ -31,5 +31,5 @@ public class Keypad extends JPanel{
                 this.add(btn);
             }
         }
-    }   
+    }
 }

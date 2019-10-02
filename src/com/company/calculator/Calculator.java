@@ -15,6 +15,7 @@ public final class Calculator extends JFrame implements ActionListener {
     private Operator previousOperator = null;
     private Display display;
     private Action lastAction;
+    private static final double MAX_VALUE = 999_999_999_999_999d;
 
     private enum Operator {
 
@@ -51,22 +52,31 @@ public final class Calculator extends JFrame implements ActionListener {
     }
 
     private void pressedNumber(String number) {
-        lastAction = Action.NUM;
-        if (this.previousOperator == Operator.EQUAL) {
-            previousOperator = null;
-            clearDisplay();
-            isDotPressed = false;
-        }
+        if (Double.parseDouble(display.getValue()) < MAX_VALUE) {
 
-        displayValue.append(number);
-        display.setValue(displayValue.toString());
+            lastAction = Action.NUM;
+            if (this.previousOperator == Operator.EQUAL) {
+                previousOperator = null;
+                clearDisplay();
+                isDotPressed = false;
+            }
+
+            displayValue.append(number);
+            display.setValue(displayValue.toString());
+        }
     }
 
     private void pressedDeleteLastNumber(){
         String prevValue = display.getValue();
 
         clearDisplay();
-        display.setValue(prevValue.substring(0,prevValue.length()-1));
+        String cutValue;
+        if(prevValue.length() == 1){
+            cutValue = "0";
+        }else {
+            cutValue = prevValue.substring(0, prevValue.length() - 1);
+        }
+        display.setValue(cutValue);
         displayValue.append(prevValue);
         if (previousOperator == Operator.EQUAL) operand1 = Double.parseDouble(display.getValue());
     }
