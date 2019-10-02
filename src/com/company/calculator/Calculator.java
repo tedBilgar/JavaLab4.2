@@ -5,6 +5,8 @@ import com.company.calculator.exceptions.ZeroDividingRunTimeException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 public final class Calculator extends JFrame implements ActionListener {
 
@@ -90,21 +92,24 @@ public final class Calculator extends JFrame implements ActionListener {
 
     private void calculate(Operator operator, double b) {
         isDotPressed = false;
+        BigDecimal operandBigDecimal1 = new BigDecimal(operand1, MathContext.DECIMAL32);
+        BigDecimal operandBigDecimal2 = new BigDecimal(b, MathContext.DECIMAL32);
         switch (operator) {
             case PLUS:
-                operand1 += b;
+                operandBigDecimal1 = operandBigDecimal1.add(operandBigDecimal2);
                 break;
             case MINUS:
-                operand1 -= b;
+                operandBigDecimal1 = operandBigDecimal1.min(operandBigDecimal2);
                 break;
             case MULTIPLY:
-                operand1 *= b;
+                operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2);
                 break;
             case DIVIDE:
                 if (b == 0) throw new ZeroDividingRunTimeException();
-                operand1 /= b;
+                operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2);
                 break;
         }
+        operand1 = operandBigDecimal1.doubleValue();
     }
 
     private void unaryOperator(Operator operator, double operand2){
@@ -149,6 +154,8 @@ public final class Calculator extends JFrame implements ActionListener {
                 }
                 clearDisplay();
             }
+
+            isDotPressed = false;
 
             if (isDecimalValue(operand1)) {
                 display.setValue("" + operand1);
