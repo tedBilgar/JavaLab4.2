@@ -10,7 +10,7 @@ import java.math.MathContext;
 
 public final class Calculator extends JFrame implements ActionListener {
 
-    private double operand1;
+    private BigDecimal operand1;
     private boolean isDotPressed = false;
     private final StringBuilder displayValue;
     private int operandCount = 0;
@@ -80,11 +80,11 @@ public final class Calculator extends JFrame implements ActionListener {
         }
         display.setValue(cutValue);
         displayValue.append(prevValue);
-        if (previousOperator == Operator.EQUAL) operand1 = Double.parseDouble(display.getValue());
+        if (previousOperator == Operator.EQUAL) operand1 = new BigDecimal(display.getValue());
     }
     private void pressedClear() {
         previousOperator = null;
-        operand1 = 0;
+        operand1 = BigDecimal.ZERO;
         isDotPressed = false;
         clearDisplay();
         operandCount = 0;
@@ -92,7 +92,7 @@ public final class Calculator extends JFrame implements ActionListener {
 
     private void calculate(Operator operator, double b) {
         isDotPressed = false;
-        BigDecimal operandBigDecimal1 = new BigDecimal(operand1, MathContext.DECIMAL32);
+        BigDecimal operandBigDecimal1 = operand1;
         BigDecimal operandBigDecimal2 = new BigDecimal(b, MathContext.DECIMAL32);
         switch (operator) {
             case PLUS:
@@ -109,7 +109,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2);
                 break;
         }
-        operand1 = operandBigDecimal1.doubleValue();
+        operand1 = BigDecimal.valueOf(operandBigDecimal1.doubleValue());
     }
 
     private void unaryOperator(Operator operator, double operand2){
@@ -125,12 +125,12 @@ public final class Calculator extends JFrame implements ActionListener {
         displayValue.delete(0, displayValue.length());
         displayValue.append(operand2);
         display.setValue("" + (long) operand2);
-        operand1 = operand2;
+        operand1 = BigDecimal.valueOf(operand2);
     }
 
     private void pressedOperator(Operator operator) {
         double operand2 = displayValue.length() > 0
-                ? Double.parseDouble(display.getValue()) : operand1;
+                ? Double.parseDouble(display.getValue()) : operand1.doubleValue();
 
         try {
             if (operator == Operator.EQUAL) {
@@ -149,7 +149,7 @@ public final class Calculator extends JFrame implements ActionListener {
                     calculate(previousOperator, operand2);
                 } else {
                     if (previousOperator != Operator.EQUAL) {
-                        operand1 = operand2;
+                        operand1 = BigDecimal.valueOf(operand2);
                     }
                 }
                 clearDisplay();
@@ -158,9 +158,9 @@ public final class Calculator extends JFrame implements ActionListener {
             isDotPressed = false;
 
             if (isDecimalValue(operand1)) {
-                display.setValue("" + operand1);
+                display.setValue("" + operand1.toString());
             } else {
-                display.setValue("" + (long) operand1);
+                display.setValue("" + operand1.toString());
             }
             if (previousOperator != Operator.INVERSE_SIGN) {
                 lastAction = Action.OPERATION;
@@ -172,11 +172,13 @@ public final class Calculator extends JFrame implements ActionListener {
         }
     }
 
-    private boolean isDecimalValue(double value){
-        String[] splitter = Double.toString(value).split("\\.");
-        long decimalPart = Long.parseLong(splitter[1]);
-        if (decimalPart > 0) return true;
-        else return false;
+    private boolean isDecimalValue(BigDecimal value){
+        if (value.toString().contains(".")) {
+            String[] splitter = value.toString().split("\\.");
+            long decimalPart = Long.parseLong(splitter[1]);
+            if (decimalPart > 0) return true;
+            else return false;
+        }else return false;
     }
 
     private void addDotToNumber(){
