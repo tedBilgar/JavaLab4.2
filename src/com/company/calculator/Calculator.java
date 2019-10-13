@@ -117,7 +117,7 @@ public final class Calculator extends JFrame implements ActionListener {
         isDotPressed = false;
         switch (operator) {
             case DOUBLE_GRADE:
-                operand2 = BigDecimal.valueOf(Math.pow(operand2.doubleValue(), 2));
+                operand2 = operand2.pow(2);
                 break;
             case INVERSE_SIGN:
                 operand2 = BigDecimal.valueOf(-operand2.doubleValue());
