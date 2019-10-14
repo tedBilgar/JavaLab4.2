@@ -106,7 +106,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2);
                 break;
             case DIVIDE:
-                if (b == BigDecimal.ZERO) throw new ZeroDividingRunTimeException();
+                if (b.compareTo(BigDecimal.ZERO) == 0 ) throw new ZeroDividingRunTimeException();
                 operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2, 6, RoundingMode.HALF_UP).stripTrailingZeros();
                 break;
         }
