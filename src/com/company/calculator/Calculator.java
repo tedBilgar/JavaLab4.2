@@ -54,6 +54,10 @@ public final class Calculator extends JFrame implements ActionListener {
         display.setValue("0");
     }
 
+    private void cleanDisplayValue(){
+        displayValue.delete(0, displayValue.length());
+    }
+
     private void pressedNumber(String number) {
         if (Double.parseDouble(display.getValue()) < MAX_VALUE || lastAction == Action.OPERATION) {
 
@@ -65,9 +69,7 @@ public final class Calculator extends JFrame implements ActionListener {
             }
 
             if ((displayValue.toString().isEmpty() || displayValue.toString().equals("0"))){
-                if (!number.equals(".")){
-                    if (displayValue.toString().length() > 0) displayValue.deleteCharAt(0);
-                }
+                if (displayValue.toString().length() > 0) displayValue.deleteCharAt(0);
             }
             displayValue.append(number);
             display.setValue(displayValue.toString());
@@ -119,13 +121,13 @@ public final class Calculator extends JFrame implements ActionListener {
     }
 
     private void unaryOperator(Operator operator, BigDecimal operand2){
-        isDotPressed = false;
         switch (operator) {
             case DOUBLE_GRADE:
                 operand2 = operand2.pow(2);
                 break;
             case INVERSE_SIGN:
-                operand2 = BigDecimal.valueOf(-operand2.doubleValue());
+                isDotPressed = false;
+                operand2 = operand2.negate();
                 break;
         }
         displayValue.delete(0, displayValue.length());
@@ -178,11 +180,12 @@ public final class Calculator extends JFrame implements ActionListener {
     private void addDotToNumber(){
         if (!isDotPressed){
             isDotPressed = true;
-            String addingPart = ".";
+            String addingPart = display.getValue().isEmpty() ? "0." : display.getValue() + ".";
 
             if (lastAction != Action.OPERATION) {
+                cleanDisplayValue();
                 displayValue.append(addingPart);
-                display.setValue(display.getValue() + ".");
+                display.setValue(displayValue.toString());
                 lastAction = Action.NUM;
             }else {
                 clearDisplay();
@@ -192,7 +195,6 @@ public final class Calculator extends JFrame implements ActionListener {
             }
         }
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
