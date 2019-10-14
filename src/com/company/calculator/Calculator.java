@@ -97,13 +97,13 @@ public final class Calculator extends JFrame implements ActionListener {
         BigDecimal operandBigDecimal2 = b;
         switch (operator) {
             case PLUS:
-                operandBigDecimal1 = operandBigDecimal1.add(operandBigDecimal2);
+                operandBigDecimal1 = operandBigDecimal1.add(operandBigDecimal2).stripTrailingZeros();
                 break;
             case MINUS:
-                operandBigDecimal1 = operandBigDecimal1.subtract(operandBigDecimal2);
+                operandBigDecimal1 = operandBigDecimal1.subtract(operandBigDecimal2).stripTrailingZeros();
                 break;
             case MULTIPLY:
-                operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2);
+                operandBigDecimal1 = operandBigDecimal1.multiply(operandBigDecimal2).stripTrailingZeros();
                 break;
             case DIVIDE:
                 if (b.compareTo(BigDecimal.ZERO) == 0 ) throw new ZeroDividingRunTimeException();
@@ -134,6 +134,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 ? new BigDecimal(display.getValue()) : operand1;
 
         try {
+            // Проверка если оператор EQUAL
             if (operator == Operator.EQUAL) {
 
                 calculate(previousOperator, operand2);
@@ -157,12 +158,8 @@ public final class Calculator extends JFrame implements ActionListener {
             }
 
             isDotPressed = false;
+            display.setValue(operand1.toString());
 
-            if (isDecimalValue(operand1)) {
-                display.setValue("" + operand1.toString());
-            } else {
-                display.setValue("" + operand1.toString());
-            }
             if (previousOperator != Operator.INVERSE_SIGN) {
                 lastAction = Action.OPERATION;
             }
@@ -171,15 +168,6 @@ public final class Calculator extends JFrame implements ActionListener {
             pressedClear();
             display.setValue(zeroException.getMessage());
         }
-    }
-
-    private boolean isDecimalValue(BigDecimal value){
-        if (value.toString().contains(".")) {
-            String[] splitter = value.toString().split("\\.");
-            long decimalPart = Long.parseLong(splitter[1]);
-            if (decimalPart > 0) return true;
-            else return false;
-        }else return false;
     }
 
     private void addDotToNumber(){
