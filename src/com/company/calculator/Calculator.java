@@ -117,7 +117,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 operandBigDecimal1 = operandBigDecimal1.divide(operandBigDecimal2, 6, RoundingMode.HALF_UP).stripTrailingZeros();
                 break;
         }
-        operand1 = new BigDecimal(operandBigDecimal1.toString());
+        operand1 = new BigDecimal(operandBigDecimal1.toPlainString());
     }
 
     private void unaryOperator(Operator operator, BigDecimal operand2){
