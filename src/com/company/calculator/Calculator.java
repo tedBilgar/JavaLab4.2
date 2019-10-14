@@ -64,6 +64,11 @@ public final class Calculator extends JFrame implements ActionListener {
                 isDotPressed = false;
             }
 
+            if ((displayValue.toString().isEmpty() || displayValue.toString().equals("0"))){
+                if (!number.equals(".")){
+                    if (displayValue.toString().length() > 0) displayValue.deleteCharAt(0);
+                }
+            }
             displayValue.append(number);
             display.setValue(displayValue.toString());
         }
@@ -176,9 +181,6 @@ public final class Calculator extends JFrame implements ActionListener {
             String addingPart = ".";
 
             if (lastAction != Action.OPERATION) {
-                if (Double.parseDouble(display.getValue()) == 0) {
-                    addingPart = "0.";
-                }
                 displayValue.append(addingPart);
                 display.setValue(display.getValue() + ".");
                 lastAction = Action.NUM;
@@ -190,6 +192,7 @@ public final class Calculator extends JFrame implements ActionListener {
             }
         }
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
