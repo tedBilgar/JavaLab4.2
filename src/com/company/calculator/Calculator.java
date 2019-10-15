@@ -62,7 +62,7 @@ public final class Calculator extends JFrame implements ActionListener {
         if (Double.parseDouble(display.getValue()) < MAX_VALUE || lastAction == Action.OPERATION) {
 
             lastAction = Action.NUM;
-            if (this.previousOperator == Operator.EQUAL) {
+            if (this.previousOperator == Operator.EQUAL && isDotPressed != true) {
                 previousOperator = null;
                 clearDisplay();
                 isDotPressed = false;
@@ -73,6 +73,9 @@ public final class Calculator extends JFrame implements ActionListener {
             }
             displayValue.append(number);
             display.setValue(displayValue.toString());
+            if (previousOperator == Operator.DOUBLE_GRADE) {
+                operand1 = new BigDecimal(display.getValue());
+            }
         }
     }
 
@@ -98,8 +101,11 @@ public final class Calculator extends JFrame implements ActionListener {
         operandCount = 0;
     }
 
+    private boolean isIntegerValue(BigDecimal bd) {
+        return bd.stripTrailingZeros().scale() <= 0;
+    }
+
     private void calculate(Operator operator, BigDecimal b) {
-        isDotPressed = false;
         BigDecimal operandBigDecimal1 = operand1;
         BigDecimal operandBigDecimal2 = b;
         switch (operator) {
@@ -119,6 +125,7 @@ public final class Calculator extends JFrame implements ActionListener {
         }
         operandBigDecimal1 = operandBigDecimal1.setScale(6, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
         operand1 = new BigDecimal(operandBigDecimal1.toPlainString());
+        if (isIntegerValue(operand1)) isDotPressed = false;
     }
 
     private void unaryOperator(Operator operator, BigDecimal operand2){
@@ -134,11 +141,11 @@ public final class Calculator extends JFrame implements ActionListener {
 
         operand2 = operand2.setScale(16, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
         operand2 = new BigDecimal(operand2.toPlainString());
+        operand1 = new BigDecimal(operand2.toPlainString());
 
         displayValue.delete(0, displayValue.length());
-        displayValue.append(operand2.toPlainString());
-        display.setValue(operand2.toPlainString());
-        operand1 = new BigDecimal(operand2.toPlainString());
+        displayValue.append(operand1.toPlainString());
+        display.setValue(operand1.toPlainString());
     }
 
     private void pressedOperator(Operator operator) {
@@ -162,9 +169,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 if (lastAction != Action.OPERATION && operandCount > 1) {
                     calculate(previousOperator, operand2);
                 } else {
-                    if (previousOperator != Operator.EQUAL) {
+                    //if (previousOperator != Operator.EQUAL) {
                         operand1 = new BigDecimal(operand2.toString());
-                    }
+                    //}
                 }
                 if (operator == Operator.DOUBLE_GRADE){
                     unaryOperator(operator, operand1);
@@ -172,7 +179,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 clearDisplay();
             }
 
-            isDotPressed = false;
+            if (isIntegerValue(new BigDecimal(display.getValue()))) {
+                isDotPressed = false;
+            }
             display.setValue(operand1.toString());
 
             if (previousOperator != Operator.INVERSE_SIGN) {
@@ -190,7 +199,7 @@ public final class Calculator extends JFrame implements ActionListener {
             isDotPressed = true;
             String addingPart = display.getValue().isEmpty() ? "0." : display.getValue() + ".";
 
-            if (lastAction != Action.OPERATION) {
+            if (lastAction != Action.OPERATION || previousOperator == Operator.EQUAL || previousOperator == Operator.DOUBLE_GRADE) {
                 cleanDisplayValue();
                 displayValue.append(addingPart);
                 display.setValue(displayValue.toString());
