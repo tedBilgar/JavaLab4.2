@@ -148,7 +148,7 @@ public final class Calculator extends JFrame implements ActionListener {
                 calculate(previousOperator, operand2);
                 operandCount = 0;
 
-            } else if (operator == Operator.INVERSE_SIGN || operator == Operator.DOUBLE_GRADE) {
+            } else if (operator == Operator.INVERSE_SIGN ) {
                 unaryOperator(operator, operand2);
                 return;
             } else {
@@ -157,6 +157,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 }
                 if (lastAction != Action.OPERATION && operandCount > 1) {
                     calculate(previousOperator, operand2);
+                    if (operator == Operator.DOUBLE_GRADE){
+                        unaryOperator(operator, operand1);
+                    }
                 } else {
                     if (previousOperator != Operator.EQUAL) {
                         operand1 = new BigDecimal(operand2.toString());
