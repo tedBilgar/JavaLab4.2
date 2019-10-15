@@ -131,10 +131,14 @@ public final class Calculator extends JFrame implements ActionListener {
                 operand2 = operand2.negate();
                 break;
         }
+
+        operand2 = operand2.setScale(16, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
+        operand2 = new BigDecimal(operand2.toPlainString());
+
         displayValue.delete(0, displayValue.length());
-        displayValue.append(operand2);
-        display.setValue("" + operand2.toString());
-        operand1 = new BigDecimal(operand2.toString());
+        displayValue.append(operand2.toPlainString());
+        display.setValue(operand2.toPlainString());
+        operand1 = new BigDecimal(operand2.toPlainString());
     }
 
     private void pressedOperator(Operator operator) {
@@ -157,13 +161,13 @@ public final class Calculator extends JFrame implements ActionListener {
                 }
                 if (lastAction != Action.OPERATION && operandCount > 1) {
                     calculate(previousOperator, operand2);
-                    if (operator == Operator.DOUBLE_GRADE){
-                        unaryOperator(operator, operand1);
-                    }
                 } else {
                     if (previousOperator != Operator.EQUAL) {
                         operand1 = new BigDecimal(operand2.toString());
                     }
+                }
+                if (operator == Operator.DOUBLE_GRADE){
+                    unaryOperator(operator, operand1);
                 }
                 clearDisplay();
             }
