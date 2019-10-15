@@ -179,8 +179,10 @@ public final class Calculator extends JFrame implements ActionListener {
                 clearDisplay();
             }
 
-            if (isIntegerValue(new BigDecimal(display.getValue()))) {
+            if (operator != Operator.EQUAL && operator != Operator.DOUBLE_GRADE) {
                 isDotPressed = false;
+            }else {
+                if (isIntegerValue(operand1)) isDotPressed = false;
             }
             display.setValue(operand1.toString());
 
