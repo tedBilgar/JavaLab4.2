@@ -134,7 +134,9 @@ public final class Calculator extends JFrame implements ActionListener {
                 operand2 = operand2.pow(2);
                 break;
             case INVERSE_SIGN:
-                isDotPressed = false;
+                if (isIntegerValue(operand2)) {
+                    isDotPressed = false;
+                }
                 operand2 = operand2.negate();
                 break;
         }
