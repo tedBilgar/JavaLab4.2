@@ -125,7 +125,9 @@ public final class Calculator extends JFrame implements ActionListener {
         }
         operandBigDecimal1 = operandBigDecimal1.setScale(6, BigDecimal.ROUND_HALF_UP).stripTrailingZeros();
         operand1 = new BigDecimal(operandBigDecimal1.toPlainString());
-        if (isIntegerValue(operand1)) isDotPressed = false;
+        if (isIntegerValue(operand1)) {
+            isDotPressed = false;
+        } else isDotPressed = true;
     }
 
     private void unaryOperator(Operator operator, BigDecimal operand2){
